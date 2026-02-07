@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calculadora Mapemi - V2</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            /* Azul Mapemi */
+            --accent: #166534;
+            /* Verde Lucro (Ajustado para Contraste) */
+            --danger: #991b1b;
+            /* Vermelho Prejuízo (Ajustado para Contraste) */
+            --bg: #f0f2f5;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            max-width: 150px;
+            height: auto;
+            margin: 0 auto 5px;
+            display: block;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #edf2f7;
+            padding-bottom: 15px;
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            margin: 4px 0 0;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+
+        /* Inputs Numéricos Modernos */
+        input[type="number"] {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+        }
+
+        input[type="number"]::placeholder {
+            color: #cbd5e1;
+            font-weight: 400;
+        }
+
+        /* Slider Otimizado para Touch */
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        input[type="range"] {
+            flex-grow: 1;
+            height: 6px;
+            background: #cbd5e1;
+            border-radius: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border: 3px solid #fff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .percent-display {
+            font-weight: 800;
+            color: var(--primary);
+            min-width: 50px;
+            text-align: center;
+            background: #e0f2fe;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Cartão de Resultado */
+        .results-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 24px;
+            margin-top: auto;
+            /* Empurra para baixo */
+            text-align: center;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .results-card.profit {
+            background: #dcfce7;
+            border-color: var(--accent);
+        }
+
+        .results-card.loss {
+            background: #fee2e2;
+            border-color: var(--danger);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+
+        .result-row span:last-child {
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .divider {
+            height: 1px;
+            background: #cbd5e1;
+            margin: 15px 0;
+            opacity: 0.5;
+        }
+
+        .result-main {
+            padding-top: 5px;
+        }
+
+        .result-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .profit .result-value {
+            color: #166534;
+        }
+
+        .loss .result-value {
+            color: #991b1b;
+        }
+
+        .margin-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #fff;
+            background: #94a3b8;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .profit .margin-badge {
+            background: var(--accent);
+        }
+
+        .loss .margin-badge {
+            background: var(--danger);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <img src="logo-marca.png" alt="Mapemi Brasil" class="logo">
+            <p>Calculadora de Rentabilidade</p>
+        </header>
+
+        <div class="input-group">
+            <label>Preço Tabela Mapemi (R$)</label>
+            <input type="number" id="precoTabela" placeholder="0,00" step="0.01" min="0"
+                oninput="validity.valid||(value='');" inputmode="decimal">
+        </div>
+
+        <div class="input-group">
+            <label>Desconto Distribuidora (%)</label>
+            <div class="range-container">
+                <input type="range" id="descontoRange" min="0" max="99" value="0">
+                <span class="percent-display" id="descontoDisplay">0%</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Preço Venda na Farmácia (R$)</label>
+            <input type="number" id="precoVenda" placeholder="0,00" step="0.01" min="0"
+                oninput="validity.valid||(value='');" inputmode="decimal">
+        </div>
+
+        <div id="resultCard" class="results-card">
+            <div class="result-row">
+                <span>Custo Farmácia (Líquido):</span>
+                <span id="custoAquisicao">R$ 0,00</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="result-main">
+                <div class="result-label">Lucro da Farmácia</div>
+                <div class="result-value" id="lucroValor">R$ 0,00</div>
+                <div class="margin-badge" id="margemPercent">Margem: 0%</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos do DOM
+        const elPrecoTabela = document.getElementById('precoTabela');
+        const elDescontoRange = document.getElementById('descontoRange');
+        const elDescontoDisplay = document.getElementById('descontoDisplay');
+        const elPrecoVenda = document.getElementById('precoVenda');
+
+        const elCustoAquisicao = document.getElementById('custoAquisicao');
+        const elLucroValor = document.getElementById('lucroValor');
+        const elMargemPercent = document.getElementById('margemPercent');
+        const elResultCard = document.getElementById('resultCard');
+
+        // Função de Formatação Moeda
+        function formatBRL(value) {
+            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // Função Principal de Cálculo
+        function calcular() {
+            // Pega valores ou assume zero, garantindo não negativo
+            const tabela = Math.max(0, parseFloat(elPrecoTabela.value) || 0);
+            const desconto = Math.max(0, parseFloat(elDescontoRange.value) || 0);
+            const venda = Math.max(0, parseFloat(elPrecoVenda.value) || 0);
+
+            // Atualiza o texto da %
+            elDescontoDisplay.textContent = desconto + '%';
+
+            // 1. Custo de Aquisição (Tabela Mapemi - Desconto)
+            const custo = tabela - (tabela * (desconto / 100));
+
+            // 2. Lucro (Venda - Custo)
+            const lucro = venda - custo;
+
+            // 3. Margem % (Lucro / Venda)
+            let margem = 0;
+            if (venda > 0) {
+                margem = (lucro / venda) * 100;
+            }
+
+            // Exibir valores na tela
+            elCustoAquisicao.textContent = formatBRL(custo);
+            elLucroValor.textContent = formatBRL(lucro);
+            elMargemPercent.textContent = `Margem: ${margem.toFixed(1)}%`;
+
+            // Feedback Visual (Cores)
+            elResultCard.classList.remove('profit', 'loss');
+
+            if (venda > 0) {
+                if (lucro > 0) {
+                    elResultCard.classList.add('profit');
+                    elLucroValor.textContent = "+ " + formatBRL(lucro);
+                } else if (lucro < 0) {
+                    elResultCard.classList.add('loss');
+                }
+            }
+        }
+
+        // Event Listeners
+        elPrecoTabela.addEventListener('input', calcular);
+        elDescontoRange.addEventListener('input', calcular);
+        elPrecoVenda.addEventListener('input', calcular);
+
+    </script>
+</body>
+
+</html>
