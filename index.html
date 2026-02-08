@@ -91,7 +91,7 @@
         }
 
         /* Inputs Numéricos Modernos */
-        input[type="number"] {
+        input.currency-input {
             width: 100%;
             padding: 16px;
             font-size: 1.3rem;
@@ -101,17 +101,15 @@
             border-radius: 16px;
             background: #f8fafc;
             transition: all 0.2s ease;
-            -moz-appearance: textfield;
-            appearance: textfield;
         }
 
-        input[type="number"]:focus {
+        input.currency-input:focus {
             border-color: var(--primary);
             background: #fff;
             box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
         }
 
-        input[type="number"]::placeholder {
+        input.currency-input::placeholder {
             color: #cbd5e1;
             font-weight: 400;
         }
@@ -249,47 +247,6 @@
         .loss .margin-badge {
             background: var(--danger);
         }
-
-        /* Input com botões de decimal */
-        .input-wrapper {
-            display: flex;
-            gap: 8px;
-            align-items: stretch;
-        }
-
-        .input-wrapper input[type="number"] {
-            flex: 1;
-        }
-
-        .decimal-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .decimal-btn {
-            padding: 8px 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--primary);
-            background: #e0f2fe;
-            border: 2px solid #bae6fd;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .decimal-btn:hover {
-            background: #bae6fd;
-            border-color: var(--primary);
-        }
-
-        .decimal-btn:active {
-            transform: scale(0.95);
-            background: var(--primary);
-            color: #fff;
-        }
     </style>
 </head>
 
@@ -303,14 +260,7 @@
 
         <div class="input-group">
             <label>Preço Tabela (R$)</label>
-            <div class="input-wrapper">
-                <input type="number" id="precoTabela" placeholder="0,00" step="0.01" min="0"
-                    oninput="validity.valid||(value='');" inputmode="decimal">
-                <div class="decimal-buttons">
-                    <button type="button" class="decimal-btn" onclick="addDecimal('precoTabela', 0.50)">,50</button>
-                    <button type="button" class="decimal-btn" onclick="addDecimal('precoTabela', 0.99)">,99</button>
-                </div>
-            </div>
+            <input type="text" id="precoTabela" class="currency-input" placeholder="0,00" inputmode="decimal">
         </div>
 
         <div class="input-group">
@@ -323,14 +273,7 @@
 
         <div class="input-group">
             <label>Preço Venda na Farmácia (R$)</label>
-            <div class="input-wrapper">
-                <input type="number" id="precoVenda" placeholder="0,00" step="0.01" min="0"
-                    oninput="validity.valid||(value='');" inputmode="decimal">
-                <div class="decimal-buttons">
-                    <button type="button" class="decimal-btn" onclick="addDecimal('precoVenda', 0.50)">,50</button>
-                    <button type="button" class="decimal-btn" onclick="addDecimal('precoVenda', 0.99)">,99</button>
-                </div>
-            </div>
+            <input type="text" id="precoVenda" class="currency-input" placeholder="0,00" inputmode="decimal">
         </div>
 
         <div id="resultCard" class="results-card">
@@ -366,12 +309,21 @@
             return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
+        // Função para converter valor brasileiro (vírgula) para número
+        function parseValue(value) {
+            if (!value) return 0;
+            // Substitui vírgula por ponto para parsing
+            const normalized = value.replace(',', '.');
+            const parsed = parseFloat(normalized);
+            return isNaN(parsed) ? 0 : Math.max(0, parsed);
+        }
+
         // Função Principal de Cálculo
         function calcular() {
             // Pega valores ou assume zero, garantindo não negativo
-            const tabela = Math.max(0, parseFloat(elPrecoTabela.value) || 0);
+            const tabela = parseValue(elPrecoTabela.value);
             const desconto = Math.max(0, parseFloat(elDescontoRange.value) || 0);
-            const venda = Math.max(0, parseFloat(elPrecoVenda.value) || 0);
+            const venda = parseValue(elPrecoVenda.value);
 
             // Atualiza o texto da %
             elDescontoDisplay.textContent = desconto + '%';
@@ -404,15 +356,6 @@
                     elResultCard.classList.add('loss');
                 }
             }
-        }
-
-        // Função para adicionar centavos ao valor
-        function addDecimal(inputId, decimalValue) {
-            const input = document.getElementById(inputId);
-            const currentValue = parseFloat(input.value) || 0;
-            const integerPart = Math.floor(currentValue);
-            input.value = (integerPart + decimalValue).toFixed(2);
-            calcular();
         }
 
         // Event Listeners
