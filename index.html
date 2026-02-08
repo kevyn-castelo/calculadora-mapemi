@@ -249,6 +249,47 @@
         .loss .margin-badge {
             background: var(--danger);
         }
+
+        /* Input com botões de decimal */
+        .input-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .input-wrapper input[type="number"] {
+            flex: 1;
+        }
+
+        .decimal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .decimal-btn {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: #e0f2fe;
+            border: 2px solid #bae6fd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .decimal-btn:hover {
+            background: #bae6fd;
+            border-color: var(--primary);
+        }
+
+        .decimal-btn:active {
+            transform: scale(0.95);
+            background: var(--primary);
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -262,8 +303,14 @@
 
         <div class="input-group">
             <label>Preço Tabela (R$)</label>
-            <input type="number" id="precoTabela" placeholder="0,00" step="0.01" min="0"
-                oninput="validity.valid||(value='');" inputmode="decimal">
+            <div class="input-wrapper">
+                <input type="number" id="precoTabela" placeholder="0,00" step="0.01" min="0"
+                    oninput="validity.valid||(value='');" inputmode="decimal">
+                <div class="decimal-buttons">
+                    <button type="button" class="decimal-btn" onclick="addDecimal('precoTabela', 0.50)">,50</button>
+                    <button type="button" class="decimal-btn" onclick="addDecimal('precoTabela', 0.99)">,99</button>
+                </div>
+            </div>
         </div>
 
         <div class="input-group">
@@ -276,8 +323,14 @@
 
         <div class="input-group">
             <label>Preço Venda na Farmácia (R$)</label>
-            <input type="number" id="precoVenda" placeholder="0,00" step="0.01" min="0"
-                oninput="validity.valid||(value='');" inputmode="decimal">
+            <div class="input-wrapper">
+                <input type="number" id="precoVenda" placeholder="0,00" step="0.01" min="0"
+                    oninput="validity.valid||(value='');" inputmode="decimal">
+                <div class="decimal-buttons">
+                    <button type="button" class="decimal-btn" onclick="addDecimal('precoVenda', 0.50)">,50</button>
+                    <button type="button" class="decimal-btn" onclick="addDecimal('precoVenda', 0.99)">,99</button>
+                </div>
+            </div>
         </div>
 
         <div id="resultCard" class="results-card">
@@ -351,6 +404,15 @@
                     elResultCard.classList.add('loss');
                 }
             }
+        }
+
+        // Função para adicionar centavos ao valor
+        function addDecimal(inputId, decimalValue) {
+            const input = document.getElementById(inputId);
+            const currentValue = parseFloat(input.value) || 0;
+            const integerPart = Math.floor(currentValue);
+            input.value = (integerPart + decimalValue).toFixed(2);
+            calcular();
         }
 
         // Event Listeners
